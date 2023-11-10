@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<University>
+        
+    <Student ID="20200580">
+                
+        <FirstName>MOHAMMAD</FirstName>
+                
+        <LastName>ABDELK</LastName>
+                
+        <Gender>Male</Gender>
+                
+        <GPA>3.5</GPA>
+                
+        <Level>4</Level>
+                
+        <Address>somewhere on earth</Address>
+            
+    </Student>
+        
+    <Student ID="20200581">
+                
+        <FirstName>Nagi</FirstName>
+                
+        <LastName>Mohamed</LastName>
+                
+        <Gender>Male</Gender>
+                
+        <GPA>2.98</GPA>
+                
+        <Level>4</Level>
+                
+        <Address>somewhere else on earth</Address>
+            
+    </Student>
+    
+</University>
