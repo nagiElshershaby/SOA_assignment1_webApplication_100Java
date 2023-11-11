@@ -159,7 +159,7 @@ public class MainView extends VerticalLayout {
                 if (student.getNodeType() == Node.ELEMENT_NODE) {
                     Element studentElement = (Element) student;
                     if (studentElement.getAttribute("ID").equals(query) ||
-                            studentElement.getElementsByTagName("FirstName").item(0).getTextContent().equals(query)) {
+                            studentElement.getElementsByTagName("GPA").item(0).getTextContent().equals(query)) {
                         var verticalLayout = new VerticalLayout();
                         verticalLayout.setAlignItems(Alignment.START);
 //                        verticalLayout.add(new H6("Found student with ID: " + studentElement.getAttribute("ID")));
