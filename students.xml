@@ -1,148 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <University>
-                                    
-    
-    
-    
-    
-    
-    
-    
-    <Student ID="20200580">
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <FirstName>MOHAMMAD</FirstName>
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <LastName>ABDELK</LastName>
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <Gender>Male</Gender>
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <GPA>3.5</GPA>
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <Level>4</Level>
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <Address>somewhere on earth</Address>
-                                                                    
-    
-    
-    
-    
-    
-    
-    
-    </Student>
-                                    
-    
-    
-    
-    
-    
-                    
-
-    
-
-
-    
-    
-    
-    
     <Student ID="000">
-                                        
-        
-        
-        
         <FirstName>ismail</FirstName>
-                                        
-        
-        
-        
         <LastName>mohamed</LastName>
-                                        
-        
-        
-        
         <Gender>male</Gender>
-                                        
-        
-        
-        
         <GPA>4</GPA>
-                                        
-        
-        
-        
         <Level>4</Level>
-                                        
-        
-        
-        
         <Address>RDK building A, shop 11</Address>
-                                    
-    
-    
-    
     </Student>
-                
-
-
-    
     <Student ID="20200501">
-                
         <FirstName>name501</FirstName>
-                
         <LastName>last501</LastName>
-                
         <Gender>female</Gender>
-                
         <GPA>3</GPA>
-                
         <Level>3</Level>
-                
         <Address>Giza</Address>
-            
     </Student>
-    
     <Student ID="20200502">
         <FirstName>ismail </FirstName>
         <LastName>Ahmed</LastName>
@@ -150,5 +23,13 @@
         <GPA>3.5</GPA>
         <Level>3</Level>
         <Address>Giza</Address>
+    </Student>
+    <Student ID="20200580">
+        <FirstName>MOHAMMAD</FirstName>
+        <LastName>ABDELK</LastName>
+        <Gender>Male</Gender>
+        <GPA>3.5</GPA>
+        <Level>4</Level>
+        <Address>somewhere on earth</Address>
     </Student>
 </University>

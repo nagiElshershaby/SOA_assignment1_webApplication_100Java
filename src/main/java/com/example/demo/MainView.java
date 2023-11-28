@@ -1,11 +1,9 @@
 package com.example.demo;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -167,23 +165,7 @@ public class MainView extends VerticalLayout {
             // Search operation
             String query = search.getValue();
             NodeList students = doc.getElementsByTagName("Student");
-//            for (int i = 0; i < students.getLength(); i++) {
-//                Node student = students.item(i);
-//                if (student.getNodeType() == Node.ELEMENT_NODE) {
-//                    Element studentElement = (Element) student;
-//                    if (studentElement.getElementsByTagName("FirstName").item(0).getTextContent().equals(query) ||
-//                            studentElement.getElementsByTagName("GPA").item(0).getTextContent().equals(query)) {
-//                        var verticalLayout = new VerticalLayout();
-//                        verticalLayout.setAlignItems(Alignment.START);
-////                        verticalLayout.add(new H6("Found student with ID: " + studentElement.getAttribute("ID")));
-//                        Notification.show("Found student with ID: " + studentElement.getAttribute("ID"));
-//                        verticalLayout.add(new H6("ID: " + studentElement.getAttribute("ID") + ",  First Name: " + studentElement.getElementsByTagName("FirstName").item(0).getTextContent() + ",  Last Name: " + studentElement.getElementsByTagName("LastName").item(0).getTextContent() + ",  Gender: " + studentElement.getElementsByTagName("Gender").item(0).getTextContent() + ",  GPA: " + studentElement.getElementsByTagName("GPA").item(0).getTextContent() + ",  Level: " + studentElement.getElementsByTagName("Level").item(0).getTextContent() + ",  Address: " + studentElement.getElementsByTagName("Address").item(0).getTextContent()));
-//                        searchRow.add(verticalLayout);
-//                        searchFlag = true;
-//                        break;
-//                    }
-//                }
-//            }
+
             // Search operation by any of the fields
             String searchFieldValue = searchField.getValue();
             ArrayList<Node> studentsFound = new ArrayList<>();
@@ -217,8 +199,7 @@ public class MainView extends VerticalLayout {
             // display the found students in a grid
             ArrayList<Student> studentsList = new ArrayList<>();
 
-            for (int i = 0; i < studentsFound.size(); i++) {
-                Node student = studentsFound.get(i);
+            for (Node student : studentsFound) {
                 if (student.getNodeType() == Node.ELEMENT_NODE) {
                     Element studentElement = (Element) student;
 
@@ -230,7 +211,7 @@ public class MainView extends VerticalLayout {
                     var level = studentElement.getElementsByTagName("Level").item(0).getTextContent();
                     var address = studentElement.getElementsByTagName("Address").item(0).getTextContent();
 
-                    var s = new Student(studentID,firstName,lastName,gender,GPA,level,address);
+                    var s = new Student(studentID, firstName, lastName, gender, GPA, level, address);
                     studentsList.add(s);
 
                 }
@@ -327,12 +308,6 @@ public class MainView extends VerticalLayout {
         var sortButtonAscendingOrDescending = new RadioButtonGroup<String>("", "Ascending", "Descending");
         sortButtonAscendingOrDescending.setValue("Ascending");
         var sortButton = new Button("sort");
-//        var sortButtonFirstName = new Button("sort by first name");
-//        var sortButtonLastName = new Button("sort by last name");
-//        var sortButtonGender = new Button("sort by gender");
-//        var sortButtonGPA = new Button("sort by GPA");
-//        var sortButtonLevel = new Button("sort by level");
-//        var sortButtonAddress = new Button("sort by address");
 
         var sortRow = new HorizontalLayout();
 
@@ -414,6 +389,61 @@ public class MainView extends VerticalLayout {
 
                     // update the grid
                     grid.setItems(studentsList);
+
+                    //save the sorted list to the xml file
+
+
+                    // 1- Build an XML document.
+
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = null;
+                    try {
+                        builder = factory.newDocumentBuilder();
+                    } catch (ParserConfigurationException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Document doc;
+                    File xmlFile = new File("students.xml");
+
+                    // Check if XML file exists
+//                    if (xmlFile.exists()) {
+//                        doc = builder.parse(xmlFile);
+//                    } else {
+                        doc = builder.newDocument();
+                        Element root = doc.createElement("University");
+                        doc.appendChild(root);
+//                    }
+
+                    // 3- Take student data from the user.
+                    for (Student value : studentsList) {
+
+                        Element student = doc.createElement("Student");
+                        student.setAttribute("ID", value.getID());
+                        doc.getDocumentElement().appendChild(student);
+
+                        // Create and append student data
+                        appendElement(doc, student, "FirstName", value.getFirstName());
+                        appendElement(doc, student, "LastName", value.getLastName());
+                        appendElement(doc, student, "Gender", value.getGender());
+                        appendElement(doc, student, "GPA", value.getGPA());
+                        appendElement(doc, student, "Level", value.getLevel());
+                        appendElement(doc, student, "Address", value.getAddress());
+                    }
+
+                    // Save the XML document to a file
+                    Transformer transformer = null;
+                    try {
+                        transformer = TransformerFactory.newInstance().newTransformer();
+                    } catch (TransformerConfigurationException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                    try {
+                        transformer.transform(new DOMSource(doc), new StreamResult(xmlFile));
+                    } catch (TransformerException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
                 }
         );
         sortRow.add(sortField,sortButtonAscendingOrDescending,sortButton);
@@ -444,7 +474,7 @@ public class MainView extends VerticalLayout {
         // 1- Build an XML document.
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = null;
+        DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
