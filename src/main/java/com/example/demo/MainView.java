@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
@@ -63,9 +64,16 @@ public class MainView extends VerticalLayout {
         // submit button
         var addStudentButton = new Button("add Student");
         var searchButton = new Button("search");
+        var searchButtonID = new Button("search by ID");
+        var searchButtonFirstName = new Button("search by first name");
+        var searchButtonLastName = new Button("search by last name");
+        var searchButtonGender = new Button("search by gender");
+        var searchButtonGPA = new Button("search by GPA");
+        var searchButtonLevel = new Button("search by level");
+        var searchButtonAddress = new Button("search by address");
         var deleteButton = new Button("delete Student");
 
-        var searchRow = new HorizontalLayout(search,searchButton);
+        var searchRow = new HorizontalLayout(search,searchButton, searchButtonID, searchButtonFirstName, searchButtonLastName, searchButtonGender, searchButtonGPA, searchButtonLevel, searchButtonAddress);
         searchRow.setAlignItems(Alignment.BASELINE);
         var deleteRow = new HorizontalLayout(delete,deleteButton);
         deleteRow.setAlignItems(Alignment.BASELINE);
@@ -158,7 +166,7 @@ public class MainView extends VerticalLayout {
                 Node student = students.item(i);
                 if (student.getNodeType() == Node.ELEMENT_NODE) {
                     Element studentElement = (Element) student;
-                    if (studentElement.getAttribute("ID").equals(query) ||
+                    if (studentElement.getElementsByTagName("FirstName").item(0).getTextContent().equals(query) ||
                             studentElement.getElementsByTagName("GPA").item(0).getTextContent().equals(query)) {
                         var verticalLayout = new VerticalLayout();
                         verticalLayout.setAlignItems(Alignment.START);
@@ -178,7 +186,7 @@ public class MainView extends VerticalLayout {
 
 
         });
-        searchButton.addClickShortcut(Key.ENTER);
+//        searchButton.addClickShortcut(Key.ENTER);
         deleteButton.addClickListener(e -> {
 
             deleteFlag = false;
@@ -251,15 +259,27 @@ public class MainView extends VerticalLayout {
 
         });
 //        deleteButton.addClickShortcut(Key.ENTER);
-
 //        searchRow.add(search,searchButton);
-//
 //        deleteRow.add(delete,deleteButton);
 
         var firstRow = new HorizontalLayout(ID,firstName, lastName, gender);
         var secondRow =new HorizontalLayout(GPA, level, address, addStudentButton);
         secondRow.setAlignItems(Alignment.BASELINE);
-        var formLayout = new VerticalLayout(searchRow,deleteRow,firstRow, secondRow);
+
+        //sorting
+        var sortButton = new RadioButtonGroup<String>("", "Ascending", "Descending");
+        sortButton.setValue("Ascending");
+        var sortButtonID = new Button("sort by ID");
+        var sortButtonFirstName = new Button("sort by first name");
+        var sortButtonLastName = new Button("sort by last name");
+        var sortButtonGender = new Button("sort by gender");
+        var sortButtonGPA = new Button("sort by GPA");
+        var sortButtonLevel = new Button("sort by level");
+        var sortButtonAddress = new Button("sort by address");
+
+        var sortRow = new HorizontalLayout();
+        sortRow.add(sortButton,sortButtonID,sortButtonFirstName,sortButtonLastName,sortButtonGender,sortButtonGPA,sortButtonLevel,sortButtonAddress);
+        var formLayout = new VerticalLayout(searchRow,deleteRow,firstRow, secondRow, sortRow);
 
         formLayout.setAlignItems(Alignment.BASELINE);
 
@@ -306,7 +326,7 @@ public class MainView extends VerticalLayout {
             doc.appendChild(root);
         }
 
-//        String search = scanner.nextLine();
+
         ArrayList<Student> studentsList = new ArrayList<>();
         NodeList students = doc.getElementsByTagName("Student");
 
