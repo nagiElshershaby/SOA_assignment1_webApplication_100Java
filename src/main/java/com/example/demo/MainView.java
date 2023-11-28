@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -45,6 +46,7 @@ public class MainView extends VerticalLayout {
     TextField address = new TextField("Address");
 
     TextField search = new TextField("Search");
+    TextField searchField = new TextField("Search field");
     boolean searchFlag = false;
     TextField delete = new TextField("Delete");
     boolean deleteFlag = false;
@@ -64,16 +66,10 @@ public class MainView extends VerticalLayout {
         // submit button
         var addStudentButton = new Button("add Student");
         var searchButton = new Button("search");
-        var searchButtonID = new Button("search by ID");
-        var searchButtonFirstName = new Button("search by first name");
-        var searchButtonLastName = new Button("search by last name");
-        var searchButtonGender = new Button("search by gender");
-        var searchButtonGPA = new Button("search by GPA");
-        var searchButtonLevel = new Button("search by level");
-        var searchButtonAddress = new Button("search by address");
+        var showAllButton = new Button("show all");
         var deleteButton = new Button("delete Student");
 
-        var searchRow = new HorizontalLayout(search,searchButton, searchButtonID, searchButtonFirstName, searchButtonLastName, searchButtonGender, searchButtonGPA, searchButtonLevel, searchButtonAddress);
+        var searchRow = new HorizontalLayout(search, searchField,searchButton, showAllButton);
         searchRow.setAlignItems(Alignment.BASELINE);
         var deleteRow = new HorizontalLayout(delete,deleteButton);
         deleteRow.setAlignItems(Alignment.BASELINE);
@@ -152,33 +148,99 @@ public class MainView extends VerticalLayout {
         });
         addStudentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
+        showAllButton.addClickListener(e -> {
+            searchFlag = false;
+            deleteFlag = false;
+            searchRow.removeAll();
+            searchRow.add(search, searchField,searchButton, showAllButton);
+            searchRow.setAlignItems(Alignment.BASELINE);
+            deleteRow.removeAll();
+            deleteRow.add(delete,deleteButton);
+            deleteRow.setAlignItems(Alignment.BASELINE);
+            updateGrid();
+        });
         searchButton.addClickListener(e -> {
             searchFlag = false;
 
             searchRow.removeAll();
-            searchRow.add(search,searchButton);
+            searchRow.add(search, searchField,searchButton, showAllButton);
             searchRow.setAlignItems(Alignment.BASELINE);
 
             // Search operation
             String query = search.getValue();
             NodeList students = doc.getElementsByTagName("Student");
+//            for (int i = 0; i < students.getLength(); i++) {
+//                Node student = students.item(i);
+//                if (student.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element studentElement = (Element) student;
+//                    if (studentElement.getElementsByTagName("FirstName").item(0).getTextContent().equals(query) ||
+//                            studentElement.getElementsByTagName("GPA").item(0).getTextContent().equals(query)) {
+//                        var verticalLayout = new VerticalLayout();
+//                        verticalLayout.setAlignItems(Alignment.START);
+////                        verticalLayout.add(new H6("Found student with ID: " + studentElement.getAttribute("ID")));
+//                        Notification.show("Found student with ID: " + studentElement.getAttribute("ID"));
+//                        verticalLayout.add(new H6("ID: " + studentElement.getAttribute("ID") + ",  First Name: " + studentElement.getElementsByTagName("FirstName").item(0).getTextContent() + ",  Last Name: " + studentElement.getElementsByTagName("LastName").item(0).getTextContent() + ",  Gender: " + studentElement.getElementsByTagName("Gender").item(0).getTextContent() + ",  GPA: " + studentElement.getElementsByTagName("GPA").item(0).getTextContent() + ",  Level: " + studentElement.getElementsByTagName("Level").item(0).getTextContent() + ",  Address: " + studentElement.getElementsByTagName("Address").item(0).getTextContent()));
+//                        searchRow.add(verticalLayout);
+//                        searchFlag = true;
+//                        break;
+//                    }
+//                }
+//            }
+            // Search operation by any of the fields
+            String searchFieldValue = searchField.getValue();
+            ArrayList<Node> studentsFound = new ArrayList<>();
+
             for (int i = 0; i < students.getLength(); i++) {
                 Node student = students.item(i);
                 if (student.getNodeType() == Node.ELEMENT_NODE) {
                     Element studentElement = (Element) student;
-                    if (studentElement.getElementsByTagName("FirstName").item(0).getTextContent().equals(query) ||
-                            studentElement.getElementsByTagName("GPA").item(0).getTextContent().equals(query)) {
-                        var verticalLayout = new VerticalLayout();
-                        verticalLayout.setAlignItems(Alignment.START);
-//                        verticalLayout.add(new H6("Found student with ID: " + studentElement.getAttribute("ID")));
-                        Notification.show("Found student with ID: " + studentElement.getAttribute("ID"));
-                        verticalLayout.add(new H6("ID: " + studentElement.getAttribute("ID") + ",  First Name: " + studentElement.getElementsByTagName("FirstName").item(0).getTextContent() + ",  Last Name: " + studentElement.getElementsByTagName("LastName").item(0).getTextContent() + ",  Gender: " + studentElement.getElementsByTagName("Gender").item(0).getTextContent() + ",  GPA: " + studentElement.getElementsByTagName("GPA").item(0).getTextContent() + ",  Level: " + studentElement.getElementsByTagName("Level").item(0).getTextContent() + ",  Address: " + studentElement.getElementsByTagName("Address").item(0).getTextContent()));
-                        searchRow.add(verticalLayout);
-                        searchFlag = true;
-                        break;
+                    if(searchFieldValue.equals("ID")){
+                        if (studentElement.getAttribute(searchFieldValue.trim()).trim().equalsIgnoreCase(query.trim())) {
+                            studentsFound.add(student);
+                            searchFlag = true;
+                        }
+                    }else {
+                        if (studentElement.getElementsByTagName(searchFieldValue.trim()).item(0).getTextContent().trim().equalsIgnoreCase(query.trim())) {
+                            studentsFound.add(student);
+                            searchFlag = true;
+                        }
                     }
                 }
             }
+            // Print the found students
+//            for (Node student : studentsFound) {
+//                assert student != null;
+//                if (student.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element studentElement = (Element) student;
+//                    System.out.println("Found student with ID: " + studentElement.getAttribute("ID"));
+//                }
+//            }
+
+            // display the found students in a grid
+            ArrayList<Student> studentsList = new ArrayList<>();
+
+            for (int i = 0; i < studentsFound.size(); i++) {
+                Node student = studentsFound.get(i);
+                if (student.getNodeType() == Node.ELEMENT_NODE) {
+                    Element studentElement = (Element) student;
+
+                    var studentID = studentElement.getAttribute("ID");
+                    var firstName = studentElement.getElementsByTagName("FirstName").item(0).getTextContent();
+                    var lastName = studentElement.getElementsByTagName("LastName").item(0).getTextContent();
+                    var gender = studentElement.getElementsByTagName("Gender").item(0).getTextContent();
+                    var GPA = studentElement.getElementsByTagName("GPA").item(0).getTextContent();
+                    var level = studentElement.getElementsByTagName("Level").item(0).getTextContent();
+                    var address = studentElement.getElementsByTagName("Address").item(0).getTextContent();
+
+                    var s = new Student(studentID,firstName,lastName,gender,GPA,level,address);
+                    studentsList.add(s);
+
+                }
+            }
+            grid.setItems(studentsList);
+            searchRow.add(new H6("number of students found: " + studentsList.size()));
+            Notification.show("number of students found: " + studentsList.size());
+
             if (!searchFlag) {
                 searchRow.add(new H6("Student not found!"));
                 Notification.show("Student not found!");
@@ -186,7 +248,7 @@ public class MainView extends VerticalLayout {
 
 
         });
-//        searchButton.addClickShortcut(Key.ENTER);
+
         deleteButton.addClickListener(e -> {
 
             deleteFlag = false;
@@ -258,9 +320,6 @@ public class MainView extends VerticalLayout {
             updateGrid();
 
         });
-//        deleteButton.addClickShortcut(Key.ENTER);
-//        searchRow.add(search,searchButton);
-//        deleteRow.add(delete,deleteButton);
 
         var firstRow = new HorizontalLayout(ID,firstName, lastName, gender);
         var secondRow =new HorizontalLayout(GPA, level, address, addStudentButton);

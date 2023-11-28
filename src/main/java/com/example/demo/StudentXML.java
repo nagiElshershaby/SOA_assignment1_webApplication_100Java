@@ -6,6 +6,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import org.w3c.dom.*;
+
+import java.util.Objects;
 import java.util.Scanner;
 
 public class StudentXML {
@@ -69,6 +71,39 @@ public class StudentXML {
                     System.out.println("Found student with ID: " + studentElement.getAttribute("ID"));
                     break;
                 }
+            }
+        }
+
+        // Search operation by any of the fields
+        System.out.println("Enter any field to search:");
+        String searchField = scanner.nextLine();
+        NodeList studentsFound = new NodeList() {
+            @Override
+            public Node item(int index) {
+                return null;
+            }
+
+            @Override
+            public int getLength() {
+                return 0;
+            }
+        };
+        for (int i = 0; i < students.getLength(); i++) {
+            Node student = students.item(i);
+            if (student.getNodeType() == Node.ELEMENT_NODE) {
+                Element studentElement = (Element) student;
+                if (studentElement.getElementsByTagName(searchField).item(0).getTextContent().equals(search)) {
+                    Objects.requireNonNull(studentsFound.item(studentsFound.getLength() + 1)).appendChild(studentElement);
+                }
+            }
+        }
+        // Print the found students
+        for (int i = 0; i < studentsFound.getLength(); i++) {
+            Node student = studentsFound.item(i);
+            assert student != null;
+            if (student.getNodeType() == Node.ELEMENT_NODE) {
+                Element studentElement = (Element) student;
+                System.out.println("Found student with ID: " + studentElement.getAttribute("ID"));
             }
         }
 
