@@ -29,10 +29,7 @@ import javax.xml.transform.stream.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 
 @Route
@@ -45,6 +42,7 @@ public class MainView extends VerticalLayout {
     TextField level = new TextField("Level");
     TextField address = new TextField("Address");
 
+    TextField sortField = new TextField("sort by:");
     TextField search = new TextField("Search");
     TextField searchField = new TextField("Search field");
     boolean searchFlag = false;
@@ -326,18 +324,100 @@ public class MainView extends VerticalLayout {
         secondRow.setAlignItems(Alignment.BASELINE);
 
         //sorting
-        var sortButton = new RadioButtonGroup<String>("", "Ascending", "Descending");
-        sortButton.setValue("Ascending");
-        var sortButtonID = new Button("sort by ID");
-        var sortButtonFirstName = new Button("sort by first name");
-        var sortButtonLastName = new Button("sort by last name");
-        var sortButtonGender = new Button("sort by gender");
-        var sortButtonGPA = new Button("sort by GPA");
-        var sortButtonLevel = new Button("sort by level");
-        var sortButtonAddress = new Button("sort by address");
+        var sortButtonAscendingOrDescending = new RadioButtonGroup<String>("", "Ascending", "Descending");
+        sortButtonAscendingOrDescending.setValue("Ascending");
+        var sortButton = new Button("sort");
+//        var sortButtonFirstName = new Button("sort by first name");
+//        var sortButtonLastName = new Button("sort by last name");
+//        var sortButtonGender = new Button("sort by gender");
+//        var sortButtonGPA = new Button("sort by GPA");
+//        var sortButtonLevel = new Button("sort by level");
+//        var sortButtonAddress = new Button("sort by address");
 
         var sortRow = new HorizontalLayout();
-        sortRow.add(sortButton,sortButtonID,sortButtonFirstName,sortButtonLastName,sortButtonGender,sortButtonGPA,sortButtonLevel,sortButtonAddress);
+
+        sortButton.addClickListener(
+                e -> {
+
+                    NodeList students = doc.getElementsByTagName("Student");
+                    // sort operation by any of the fields
+                    String sortFieldValue = sortField.getValue();
+                    ArrayList<Student> studentsList = new ArrayList<>();
+
+                    for (int i = 0; i < students.getLength(); i++) {
+                        Node student = students.item(i);
+                        if (student.getNodeType() == Node.ELEMENT_NODE) {
+                            Element studentElement = (Element) student;
+
+                            var studentID = studentElement.getAttribute("ID");
+                            var firstName = studentElement.getElementsByTagName("FirstName").item(0).getTextContent();
+                            var lastName = studentElement.getElementsByTagName("LastName").item(0).getTextContent();
+                            var gender = studentElement.getElementsByTagName("Gender").item(0).getTextContent();
+                            var GPA = studentElement.getElementsByTagName("GPA").item(0).getTextContent();
+                            var level = studentElement.getElementsByTagName("Level").item(0).getTextContent();
+                            var address = studentElement.getElementsByTagName("Address").item(0).getTextContent();
+
+                            var s = new Student(studentID,firstName,lastName,gender,GPA,level,address);
+                            studentsList.add(s);
+                        }
+                    }
+
+                    // sort the studentsList by the sortFieldValue
+                    if(sortFieldValue.equals("ID")){
+                        if(sortButtonAscendingOrDescending.getValue().equals("Ascending")){
+                            studentsList.sort(Comparator.comparing(Student::getID));
+                        }else{
+                            studentsList.sort(Comparator.comparing(Student::getID).reversed());
+                        }
+                    }else if(sortFieldValue.equals("firstName")){
+                        if(sortButtonAscendingOrDescending.getValue().equals("Ascending")){
+                            studentsList.sort(Comparator.comparing(Student::getFirstName));
+                        }else{
+                            studentsList.sort(Comparator.comparing(Student::getFirstName).reversed());
+                        }
+                    }
+
+                    if(sortButtonAscendingOrDescending.getValue().equals("Ascending")){
+
+                        if(sortFieldValue.trim().equalsIgnoreCase("id")){
+                                studentsList.sort(Comparator.comparing(Student::getID));
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("firstName")){
+                            studentsList.sort(Comparator.comparing(Student::getFirstName));
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("lastName")) {
+                            studentsList.sort(Comparator.comparing(Student::getLastName));
+                        }else if (sortFieldValue.trim().equalsIgnoreCase("gender")){
+                            studentsList.sort(Comparator.comparing(Student::getGender));
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("gpa")){
+                            studentsList.sort(Comparator.comparing(Student::getGPA));
+                        } else if(sortFieldValue.trim().equalsIgnoreCase("level")){
+                            studentsList.sort(Comparator.comparing(Student::getLevel));
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("address")){
+                            studentsList.sort(Comparator.comparing(Student::getAddress));
+                        }
+                    }else{
+                        if(sortFieldValue.trim().equalsIgnoreCase("id")){
+                            studentsList.sort(Comparator.comparing(Student::getID).reversed());
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("firstName")){
+                            studentsList.sort(Comparator.comparing(Student::getFirstName).reversed());
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("lastName")) {
+                            studentsList.sort(Comparator.comparing(Student::getLastName).reversed());
+                        }else if (sortFieldValue.trim().equalsIgnoreCase("gender")){
+                            studentsList.sort(Comparator.comparing(Student::getGender).reversed());
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("gpa")){
+                            studentsList.sort(Comparator.comparing(Student::getGPA).reversed());
+                        } else if(sortFieldValue.trim().equalsIgnoreCase("level")){
+                            studentsList.sort(Comparator.comparing(Student::getLevel).reversed());
+                        }else if(sortFieldValue.trim().equalsIgnoreCase("address")){
+                            studentsList.sort(Comparator.comparing(Student::getAddress).reversed());
+                        }
+                    }
+
+                    // update the grid
+                    grid.setItems(studentsList);
+                }
+        );
+        sortRow.add(sortField,sortButtonAscendingOrDescending,sortButton);
+        sortRow.setAlignItems(Alignment.BASELINE);
         var formLayout = new VerticalLayout(searchRow,deleteRow,firstRow, secondRow, sortRow);
 
         formLayout.setAlignItems(Alignment.BASELINE);
