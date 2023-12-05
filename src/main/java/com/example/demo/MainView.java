@@ -50,7 +50,6 @@ public class MainView extends VerticalLayout {
     Binder<Student> binder = new Binder<>(Student.class);
     Document doc;
     public MainView() {
-
         add(getPage());
         updateGrid();
     }
@@ -73,15 +72,22 @@ public class MainView extends VerticalLayout {
         addStudentButton.addClickListener(e -> {
             if(firstName.getValue().isEmpty() || lastName.getValue().isEmpty() || gender.getValue().isEmpty() || GPA.getValue().isEmpty() || level.getValue().isEmpty() || address.getValue().isEmpty()){
                 Notification.show("Please fill all fields");
-//                System.out.println(textFieldFirstName.getValue());
-//                System.out.println(lastName);
-//                System.out.println(GPA);
-            }else{
+            } else if (!validateStudentAttributes(
+                    ID.getValue(),
+                    firstName.getValue(),
+                    lastName.getValue(),
+                    gender.getValue(),
+                    GPA.getValue(),
+                    level.getValue(),
+                    address.getValue()
+            )) {
+                Notification.show("Please enter valid data");
+            } else{
 
                 // 1- Build an XML document.
 
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = null;
+                DocumentBuilder builder;
                 try {
                     builder = factory.newDocumentBuilder();
                 } catch (ParserConfigurationException ex) {
@@ -102,24 +108,50 @@ public class MainView extends VerticalLayout {
                     doc.appendChild(root);
                 }
 
-                // add student to xml file
+                //add student to xml file or update student
+                int index = isDuplicateId(ID.getValue());
+                if(index != -1){
+                    // update student
+                    NodeList students = doc.getElementsByTagName("Student");
+                    // loop for each student to find the student with the same id
 
-                Element student = doc.createElement("Student");
-                student.setAttribute("ID", ID.getValue());
-                doc.getDocumentElement().appendChild(student);
+                        Node student = students.item(index);
+                        if (student.getNodeType() == Node.ELEMENT_NODE) {
+                            Element studentElement = (Element) student;
 
-                // Create and append student data
-                appendElement(doc, student, "FirstName", firstName.getValue());
-                appendElement(doc, student, "LastName", lastName.getValue());
-                appendElement(doc, student, "Gender", gender.getValue());
-                appendElement(doc, student, "GPA", GPA.getValue());
-                appendElement(doc, student, "Level", level.getValue());
-                appendElement(doc, student, "Address", address.getValue());
+                                // update student data
+                                studentElement.getElementsByTagName("FirstName").item(0).setTextContent(firstName.getValue());
+                                studentElement.getElementsByTagName("LastName").item(0).setTextContent(lastName.getValue());
+                                studentElement.getElementsByTagName("Gender").item(0).setTextContent(gender.getValue());
+                                studentElement.getElementsByTagName("GPA").item(0).setTextContent(GPA.getValue());
+                                studentElement.getElementsByTagName("Level").item(0).setTextContent(level.getValue());
+                                studentElement.getElementsByTagName("Address").item(0).setTextContent(address.getValue());
+                                Notification.show("Student updated!");
 
-                Notification.show("Student added!");
+                        }
+
+
+                } else {
+                    // add student to xml file
+
+                    Element student = doc.createElement("Student");
+                    student.setAttribute("ID", ID.getValue());
+                    doc.getDocumentElement().appendChild(student);
+
+                    // Create and append student data
+                    appendElement(doc, student, "FirstName", firstName.getValue());
+                    appendElement(doc, student, "LastName", lastName.getValue());
+                    appendElement(doc, student, "Gender", gender.getValue());
+                    appendElement(doc, student, "GPA", GPA.getValue());
+                    appendElement(doc, student, "Level", level.getValue());
+                    appendElement(doc, student, "Address", address.getValue());
+
+                    Notification.show("Student added!");
+                }
+
 
                 // Save the XML document to a file
-                Transformer transformer = null;
+                Transformer transformer;
                 try {
                     transformer = TransformerFactory.newInstance().newTransformer();
                 } catch (TransformerConfigurationException ex) {
@@ -234,7 +266,7 @@ public class MainView extends VerticalLayout {
 // 1- Build an XML document.
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = null;
+            DocumentBuilder builder;
             try {
                 builder = factory.newDocumentBuilder();
             } catch (ParserConfigurationException ex) {
@@ -256,7 +288,7 @@ public class MainView extends VerticalLayout {
             }
 
             // Save the XML document to a file
-            Transformer transformer = null;
+            Transformer transformer;
             try {
                 transformer = TransformerFactory.newInstance().newTransformer();
             } catch (TransformerConfigurationException ex) {
@@ -305,7 +337,7 @@ public class MainView extends VerticalLayout {
         secondRow.setAlignItems(Alignment.BASELINE);
 
         //sorting
-        var sortButtonAscendingOrDescending = new RadioButtonGroup<String>("", "Ascending", "Descending");
+        var sortButtonAscendingOrDescending = new RadioButtonGroup<>("", "Ascending", "Descending");
         sortButtonAscendingOrDescending.setValue("Ascending");
         var sortButton = new Button("sort");
 
@@ -396,7 +428,7 @@ public class MainView extends VerticalLayout {
                     // 1- Build an XML document.
 
                     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = null;
+                    DocumentBuilder builder;
                     try {
                         builder = factory.newDocumentBuilder();
                     } catch (ParserConfigurationException ex) {
@@ -431,7 +463,7 @@ public class MainView extends VerticalLayout {
                     }
 
                     // Save the XML document to a file
-                    Transformer transformer = null;
+                    Transformer transformer;
                     try {
                         transformer = TransformerFactory.newInstance().newTransformer();
                     } catch (TransformerConfigurationException ex) {
@@ -518,5 +550,46 @@ public class MainView extends VerticalLayout {
             }
         }
         grid.setItems(studentsList);
+    }
+
+
+    private boolean validateStudentAttributes(String id, String firstName, String lastName, String gender, String gpa, String level, String address) {
+        double gpaDouble = gpa.isEmpty() ? -1 : Double.parseDouble(gpa);
+        int levelInt = level.isEmpty() ? -1 : Integer.parseInt(level);
+
+        return id != null && !id.isEmpty()
+                && firstName != null && !firstName.isEmpty()
+                && lastName != null && !lastName.isEmpty()
+                && gender != null && !gender.isEmpty()
+                && gpaDouble >= 0 && gpaDouble <= 4
+                && levelInt > 0 && levelInt <= 4
+                && address != null && !address.isEmpty()
+//                && !isDuplicateId(id)
+                && isValidName(firstName) && isValidName(lastName)
+                && isValidName(address);
+    }
+
+    private int isDuplicateId(String id) {
+        NodeList studentsNodeList = doc.getElementsByTagName("Student");
+        for (int i = 0; i < studentsNodeList.getLength(); i++) {
+            Node student = studentsNodeList.item(i);
+            if (student.getNodeType() == Node.ELEMENT_NODE) {
+                Element studentElement = (Element) student;
+                if (studentElement.getAttribute("ID").equals(id)) {
+                    return i;
+                }
+            }
+        }
+//        for (Student student : students) {
+//            if (student.getId().equals(id)) {
+//                return true;
+//            }
+//        }
+        return -1;
+    }
+
+    private boolean isValidName(String name) {
+        // Check if the name contains only characters (a-z)
+        return name.trim().matches("[a-zA-Z]+");
     }
 }

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <University>
+    <Student ID="0">
+        <FirstName>first</FirstName>
+        <LastName>last</LastName>
+        <Gender>male</Gender>
+        <GPA>2</GPA>
+        <Level>1</Level>
+        <Address>address</Address>
+    </Student>
     <Student ID="000">
         <FirstName>ismail</FirstName>
         <LastName>mohamed</LastName>
@@ -7,6 +15,14 @@
         <GPA>4</GPA>
         <Level>4</Level>
         <Address>RDK building A, shop 11</Address>
+    </Student>
+    <Student ID="1">
+        <FirstName>f</FirstName>
+        <LastName>l</LastName>
+        <Gender>1</Gender>
+        <GPA>1</GPA>
+        <Level>1</Level>
+        <Address>a</Address>
     </Student>
     <Student ID="20200501">
         <FirstName>name501</FirstName>
