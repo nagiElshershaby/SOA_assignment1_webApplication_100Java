@@ -1,13 +1,14 @@
 package com.example.demo;
 
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +27,9 @@ public class MainView extends VerticalLayout {
 
     private final TextField languageName = new TextField("Language Name");
     private final IntegerField scoreOutof100 = new IntegerField("Score Out of 100");
-    TextField searchField = new TextField("Search");
+    private final TextField searchField = new TextField("Search");
 
     private final Button addLanguageButton = new Button("Add Language", event -> addLanguage());
-
     private final Button addButton = new Button("Add Employee", event -> addEmployee());
     private final Button deleteButton = new Button("Delete Employee", event -> deleteEmployee());
     private final Button updateSelectedEmployeeButton = new Button("Update Selected Employee Designation", event -> updateDesignation());
@@ -44,34 +44,30 @@ public class MainView extends VerticalLayout {
         grid.setColumns("firstName", "lastName", "employeeID", "designation");
         grid.setItems(employeeManagement.getEmployeeList());
         grid.addColumn(employee -> {
-            List<Language> languages = employee.getKnownLanguages();
-            if (languages != null) {
-                return languages.stream()
+            if (employee.getKnownLanguages() != null) {
+                return employee.getKnownLanguages().stream()
                         .map(language -> language.getLanguageName() + " (" + language.getScoreOutOf100() + ")")
                         .collect(Collectors.joining(", "));
             }
             return "";
         }).setHeader("Known Languages").setSortable(true).setKey("knownLanguages");
 
+        HorizontalLayout employeeInfoLayout = new HorizontalLayout(employeeId, firstName, lastName, designation);
+        HorizontalLayout languageLayout = new HorizontalLayout(languageName, scoreOutof100, addLanguageButton);
+        HorizontalLayout buttonLayout = new HorizontalLayout(addButton, deleteButton);
+        HorizontalLayout updateButtonLayout = new HorizontalLayout(updateSelectedEmployeeButton, updateTHEEmployeeButton);
+        HorizontalLayout searchLayout = new HorizontalLayout(searchField, searchButton, showJavaExpertsButton);
 
-        // Add new fields to a new HorizontalLayout
-        HorizontalLayout employeeInfoLayout = new HorizontalLayout();
-        employeeInfoLayout.add(employeeId,firstName, lastName, designation);
-
-        HorizontalLayout languageLayout = new HorizontalLayout();
-        languageLayout.add(languageName, scoreOutof100, addLanguageButton);
         languageLayout.setAlignItems(Alignment.BASELINE);
-
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(addButton, deleteButton);
-        HorizontalLayout updateButtonLayout = new HorizontalLayout();
-        updateButtonLayout.add(updateSelectedEmployeeButton, updateTHEEmployeeButton);
-
-        HorizontalLayout searchLayout = new HorizontalLayout();
-        searchLayout.add(searchField, searchButton, showJavaExpertsButton);
+        employeeInfoLayout.setAlignItems(Alignment.BASELINE);
+        buttonLayout.setAlignItems(Alignment.BASELINE);
+        updateButtonLayout.setAlignItems(Alignment.BASELINE);
         searchLayout.setAlignItems(Alignment.BASELINE);
 
-        add(employeeInfoLayout, languageLayout, buttonLayout,updateButtonLayout, searchLayout, grid);
+        add(employeeInfoLayout, languageLayout, buttonLayout, updateButtonLayout, searchLayout, grid);
+
+        setSpacing(true);
+        setPadding(true);
     }
 
     private void addEmployee() {
