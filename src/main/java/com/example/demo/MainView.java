@@ -59,7 +59,7 @@ public class MainView extends VerticalLayout {
 
         // my buttons
         // submit button
-        var addStudentButton = new Button("add Student");
+        var addStudentButton = new Button("add or update Student");
         var searchButton = new Button("search");
         var showAllButton = new Button("show all");
         var deleteButton = new Button("delete Student");
@@ -70,21 +70,43 @@ public class MainView extends VerticalLayout {
         deleteRow.setAlignItems(Alignment.BASELINE);
 
         addStudentButton.addClickListener(e -> {
-            if(firstName.getValue().isEmpty() || lastName.getValue().isEmpty() || gender.getValue().isEmpty() || GPA.getValue().isEmpty() || level.getValue().isEmpty() || address.getValue().isEmpty()){
-                Notification.show("Please fill all fields");
-            } else if (!validateStudentAttributes(
-                    ID.getValue(),
-                    firstName.getValue(),
-                    lastName.getValue(),
-                    gender.getValue(),
-                    GPA.getValue(),
-                    level.getValue(),
-                    address.getValue()
-            )) {
-                Notification.show("Please enter valid data");
-            } else{
-
-                // 1- Build an XML document.
+                if(ID.getValue() == null || ID.getValue().isEmpty()){
+                    Notification.show("Please fill id field");
+                }
+                else if (firstName.getValue() == null || firstName.getValue().isEmpty()){
+                    Notification.show("Please fill firsName field");
+                }
+                else if (lastName.getValue() == null || lastName.getValue().isEmpty()){
+                    Notification.show("Please fill lasName field");
+                }
+                else if (gender.getValue() == null || gender.getValue().isEmpty()){
+                    Notification.show("Please fill gender field");
+                }
+                else if (GPA.getValue() == null || GPA.getValue().isEmpty()){
+                    Notification.show("Please fill GPA field");
+                }
+                else if (level.getValue() == null || level.getValue().isEmpty()){
+                    Notification.show("Please fill level field");
+                }
+                else if (Integer.parseInt(GPA.getValue()) < 0 || Integer.parseInt(GPA.getValue()) > 4) {
+                    Notification.show("wrong in gpa field ");
+                }
+                else if (Integer.parseInt(level.getValue()) < 0 ) {
+                    Notification.show("wrong in level field ");
+                }
+            else if (address.getValue() == null || address.getValue().isEmpty()){
+                    Notification.show("Please fill address field");
+                }
+                else if ( !isValidName(firstName.getValue())){
+                    Notification.show("not valid first name, add in chars");
+                }
+                else if (!isValidName(lastName.getValue())){
+                    Notification.show("not valid last name, add in chars");
+                }
+                else if (!isValidName(address.getValue())){
+                    Notification.show("not valid address, add in chars");
+                }else{
+                    // 1- Build an XML document.
 
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder;
@@ -346,6 +368,7 @@ public class MainView extends VerticalLayout {
         sortButton.addClickListener(
                 e -> {
 
+                    updateGrid();
                     NodeList students = doc.getElementsByTagName("Student");
                     // sort operation by any of the fields
                     String sortFieldValue = sortField.getValue();

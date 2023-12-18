@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <University>
-    <Student ID="0">
-        <FirstName>first</FirstName>
-        <LastName>last</LastName>
-        <Gender>male</Gender>
-        <GPA>2</GPA>
+    <Student ID="20200580">
+        <FirstName>MOHAMMAD</FirstName>
+        <LastName>ABDELK</LastName>
+        <Gender>Male</Gender>
+        <GPA>3.5</GPA>
+        <Level>4</Level>
+        <Address>somewhere on earth</Address>
+    </Student>
+    <Student ID="0000">
+        <FirstName>fi</FirstName>
+        <LastName>la</LastName>
+        <Gender>m</Gender>
+        <GPA>3</GPA>
         <Level>1</Level>
         <Address>address</Address>
     </Student>
-    <Student ID="000">
-        <FirstName>ismail</FirstName>
-        <LastName>mohamed</LastName>
+    <Student ID="00">
+        <FirstName>first</FirstName>
+        <LastName>last</LastName>
+        <Gender>female </Gender>
+        <GPA>3</GPA>
+        <Level>2</Level>
+        <Address>addSomewhere</Address>
+    </Student>
+    <Student ID="0">
+        <FirstName>f</FirstName>
+        <LastName>l</LastName>
         <Gender>male</Gender>
-        <GPA>4</GPA>
-        <Level>4</Level>
-        <Address>RDK building A, shop 11</Address>
+        <GPA>3</GPA>
+        <Level>2</Level>
+        <Address>add</Address>
+    </Student>
+    <Student ID="20200">
+        <FirstName>f</FirstName>
+        <LastName>l</LastName>
+        <Gender>female</Gender>
+        <GPA>3</GPA>
+        <Level>3</Level>
+        <Address>add</Address>
     </Student>
     <Student ID="1">
         <FirstName>f</FirstName>
@@ -23,6 +47,14 @@
         <GPA>1</GPA>
         <Level>1</Level>
         <Address>a</Address>
+    </Student>
+    <Student ID="000">
+        <FirstName>ismail</FirstName>
+        <LastName>mohamed</LastName>
+        <Gender>male</Gender>
+        <GPA>4</GPA>
+        <Level>4</Level>
+        <Address>RDK building A, shop 11</Address>
     </Student>
     <Student ID="20200501">
         <FirstName>name501</FirstName>
@@ -39,13 +71,5 @@
         <GPA>3.5</GPA>
         <Level>3</Level>
         <Address>Giza</Address>
-    </Student>
-    <Student ID="20200580">
-        <FirstName>MOHAMMAD</FirstName>
-        <LastName>ABDELK</LastName>
-        <Gender>Male</Gender>
-        <GPA>3.5</GPA>
-        <Level>4</Level>
-        <Address>somewhere on earth</Address>
     </Student>
 </University>
