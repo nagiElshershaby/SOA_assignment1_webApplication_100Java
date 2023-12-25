@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -38,6 +39,9 @@ public class MainView extends VerticalLayout {
     private final Button showJavaExpertsButton = new Button("Show Java Experts", event -> retrieveEmployeesKnowsJavaWithScoreAbove50());
 
     public MainView() {
+
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
         this.employeeManagement = new EmployeeManagement();
         this.employeeManagement.initializeEmployees();
 
@@ -58,6 +62,7 @@ public class MainView extends VerticalLayout {
         HorizontalLayout updateButtonLayout = new HorizontalLayout(updateSelectedEmployeeButton, updateTHEEmployeeButton);
         HorizontalLayout searchLayout = new HorizontalLayout(searchField, searchButton, showJavaExpertsButton);
 
+        addButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         languageLayout.setAlignItems(Alignment.BASELINE);
         employeeInfoLayout.setAlignItems(Alignment.BASELINE);
         buttonLayout.setAlignItems(Alignment.BASELINE);
